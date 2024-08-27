@@ -1,4 +1,9 @@
 <?php
+session_start();
+if(!isset($_SESSION['admin'])){
+    header("Location:index.php");
+    exit;
+}
 include "conn.php";
 
 if(isset($_POST['kirim'])){
@@ -28,16 +33,29 @@ if(isset($_POST['kirim'])){
 
 if(isset($_GET['hal'])){
     if($_GET['hal'] === "hapus"){
+
+            $query = "DELETE FROM tugas WHERE id = '$_GET[id]'";
+            $hasil = mysqli_query($conn, $query);
     
+            if($hasil){
                 echo "
                 <script>
-                    alert('Hanya admin yang bisa menghapus tugas');
+                    alert('Tugas berhasil terhapus ding');
+                    window.location.href = 'admingtg098.php';
+                </script>
+                ";
+            }
+            else{
+                echo "
+                <script>
+                    alert('Tugas gagal terhapus ding')
                     window.location.href = 'index.php';
                 </script>
                 ";
-               
-        }
+            }
+            
     }
+}
 
 if(isset($_POST['edit'])){
     if($_GET['hal'] === "edit"){
@@ -67,8 +85,6 @@ if(isset($_POST['edit'])){
     }
 }
 
-
-
 ?>
 
 <!DOCTYPE html>
@@ -91,18 +107,6 @@ if(isset($_POST['edit'])){
             <button id="darkmode" class="text-sm">Dark Mode</button>
         </div>
     </div>
-    <div class="flex justify-center p-5 gap-2">
-        <form action="" method="post" class="flex w-full gap-2">
-
-            <input class="rounded-lg w-full" type="text" name="keyword" placeholder="Masukkan nama matkul yang dicari...">
-            <button name="cari" type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-                
-            </button>
-        </form>
-    </div>
 
     <div class="content">
         <div class="container">
@@ -117,44 +121,42 @@ if(isset($_POST['edit'])){
             </div>
             <div style="display: flex; flex-direction: column; gap: 20px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
                 <?php
-                if (isset($_POST['cari'])) {
-                    $keyword = $_POST['keyword'];
-                    $query  = "SELECT * FROM tugas WHERE nama LIKE '%$keyword%'";
-                    $result = mysqli_query($conn, $query);
-                } else {
-                    $query = "SELECT * FROM tugas";
-                    $result = mysqli_query($conn, $query);
-                }
+                $query = "SELECT * FROM tugas";
+                $hasil = mysqli_query($conn, $query);
 
-                if (!$result) {
-                    die('Query Error: ' . mysqli_error($conn));
-                }
+                while($data = mysqli_fetch_assoc($hasil)){
 
-                while ($data = mysqli_fetch_assoc($result)) {
+                
+                
                 ?>
-                    <div style="display: flex; justify-content: space-between; gap: 20px;">
-                        <div>
-                            <h2 style="font-size: 20px;"><?="Nama Mata Kuliah: " . htmlspecialchars($data['nama'])?></h2>
-                            <p><?="Tugas : " . htmlspecialchars($data['desk'])?></p>
-                        </div>
-                        <div style="display: flex; gap: 10px;">
-                            <a href="#">
-                                <button onclick="adminOnly()">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                    </svg>
-                                </button>
-                            </a>
-                            <a href="index.php?hal=hapus&id=<?=$data['id']?>">
-                                <button>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                    </svg>
-                                </button>
-                            </a>
-                        </div>
+                <div style="display: flex; justify-content: space-between; gap: 20px;">
+
+                    <div>
+                        <h2 style="font-size: 20px;"><?="Nama Mata Kuliah: " . $data['nama']?></h2>
+                        <p><?="Tugas : " .$data['desk']?></p>
                     </div>
-                <?php
+                    <div style="display: flex; gap: 10px;">
+
+                    <a href="#">
+                        <button onclick="adminOnly()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                            </svg>
+                        </button>
+                    </a>
+
+                        
+                        <a href="admingtg098.php?hal=hapus&id=<?=$data['id']?>">
+                            <button>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                            </button>
+                        </a>
+                        
+                    </div>
+                </div>
+                    <?php 
                 }
                 ?>
             </div>

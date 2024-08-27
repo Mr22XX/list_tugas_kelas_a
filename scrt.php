@@ -1,18 +1,12 @@
 <?php
 session_start();
 if(isset($_POST['kode'])){
-    if($_POST['kodeInput'] === "admingtg"){
-        $_SESSION['login'] = true;
-        header("Location:index.php");
+    if($_POST['kodeInput'] === "admingtg!@#"){
+        $_SESSION['admin'] = true;
+        header("Location:admingtg098.php");
+        exit;
     }
-    else{
-        echo "
-        <script>
-        alert('Password salah')
-        </script>
-        ";
-        return false;
-    }
+
 }
 
 ?>
@@ -23,7 +17,7 @@ if(isset($_POST['kode'])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="stylee.css">
+    <link rel="stylesheet" href="./css/stylee.css">
 </head>
 <body>
     <div style=" padding-top: 240px;display: flex;
